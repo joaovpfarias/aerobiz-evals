@@ -1,0 +1,15 @@
+{
+  "fleet": {
+    "plane": {
+      "25e7e77c": "MD100"
+    }
+  },
+  "map": {
+    "destination": {
+      "7a44edd4": "Havana"
+    },
+    "origin": {
+      "04008c51": "Washington"
+    }
+  }
+}

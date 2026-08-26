@@ -1,0 +1,49 @@
+
+### OFFLINE — leitores sobre PNGs em disco (sem emulador)
+
+-- provas existentes (chamadas como subprocesso; veredito = exit code)
+  [OK   ] prova_tabelas: lido=exit 0 | esperado=exit 0 | RESULTADO: TUDO OK (2.2s)
+  [OK   ] prova_slots_qty: lido=exit 0 | esperado=exit 0 | RESULTADO: TUDO OK (1.4s)
+  [OK   ] prova_city_panel: lido=exit 0 | esperado=exit 0 | ACEITE: PASSOU (2.8s)
+  [OK   ] prova_lideres: lido=exit 0 | esperado=exit 0 | RESULTADO: OK (1.5s)
+  [OK   ] prova_pnl: lido=exit 0 | esperado=exit 0 | RESULTADO: OK (3.6s)
+
+-- REGRESSAO §36: read_slots_gauge = (escolhidos, N) com N por cidade
+  [OK   ] gauge:run_f0/neg_semqtd_NA06.png: lido=(1, 2) | esperado=(1, 2) | cidade com teto 2 (bug: dava None)
+  [OK   ] gauge:run_f0/neg_semqtd_NA02.png: lido=(1, 3) | esperado=(1, 3) | cidade com teto 3 (bug: dava None)
+  [OK   ] gauge:run_f0/neg_EU11.png: lido=None | esperado=None | frame no MEIO do desenho: tem que ser recusado
+  [OK   ] gauge:etapa1_slots/neg_EU11.png: lido=(1, 5) | esperado=(1, 5) | frame completo: teto 5
+
+-- ETAPA 2: leitores dos oraculos novos (resumo de rota / recusa de return)
+  [OK   ] resumo:edit_commit/a_summary.png: lido=(True, 1, 0) | esperado=(True, 1, 0) | antes do ajuste: Flts 1, Fare $720/0%
+  [OK   ] resumo:edit_commit/n_reopen_summary.png: lido=(True, 2, 10) | esperado=(True, 2, 10) | REABERTO apos commit: Flts 2, Fare $792/10%
+  [OK   ] resumo:edit_commit/d_after_A.png: lido=(False, None, None) | esperado=(False, None, None) | barra de abas NAO e o resumo: guard tem que recusar
+  [OK   ] resumo:edit_commit/k_confirm_full.png: lido=(False, None, None) | esperado=(False, None, None) | dialogo YES/NO NAO e o resumo: guard tem que recusar
+  [OK   ] resumo:edit_commit/m_back_to_menu.png: lido=(False, None, None) | esperado=(False, None, None) | menu principal NAO e o resumo: guard tem que recusar
+  [OK   ] recusa:return_slots_aceite/return_slots_SA01_confirmado.png: lido=All of your slots in this city are currently bei... | esperado=recusa reconhecida | corrida 1: 'All of your slots in this city are currently being used'
+  [OK   ] recusa:return_slots_debug/return_slots_SA01_confirmado.png: lido=All of your slots in this city are currently bei... | esperado=recusa reconhecida | corrida 2: mesma recusa, mesmo hash de TEXTBOX
+  [OK   ] recusa:return_slots_aceite/return_slots_SA01_mapa.png: lido=sem recusa | esperado=nao e recusa | tela do mapa com 'Havana': NAO e recusa, nao pode dar falso positivo
+
+====================================================================================================
+TESTE                                                        VEREDITO  LIDO  vs  ESPERADO
+----------------------------------------------------------------------------------------------------
+prova_tabelas                                                OK        exit 0  vs  exit 0   [RESULTADO: TUDO OK (2.2s)]
+prova_slots_qty                                              OK        exit 0  vs  exit 0   [RESULTADO: TUDO OK (1.4s)]
+prova_city_panel                                             OK        exit 0  vs  exit 0   [ACEITE: PASSOU (2.8s)]
+prova_lideres                                                OK        exit 0  vs  exit 0   [RESULTADO: OK (1.5s)]
+prova_pnl                                                    OK        exit 0  vs  exit 0   [RESULTADO: OK (3.6s)]
+gauge:run_f0/neg_semqtd_NA06.png                             OK        (1, 2)  vs  (1, 2)   [cidade com teto 2 (bug: dava None)]
+gauge:run_f0/neg_semqtd_NA02.png                             OK        (1, 3)  vs  (1, 3)   [cidade com teto 3 (bug: dava None)]
+gauge:run_f0/neg_EU11.png                                    OK        None  vs  None   [frame no MEIO do desenho: tem que ser recusado]
+gauge:etapa1_slots/neg_EU11.png                              OK        (1, 5)  vs  (1, 5)   [frame completo: teto 5]
+resumo:edit_commit/a_summary.png                             OK        (True, 1, 0)  vs  (True, 1, 0)   [antes do ajuste: Flts 1, Fare $720/0%]
+resumo:edit_commit/n_reopen_summary.png                      OK        (True, 2, 10)  vs  (True, 2, 10)   [REABERTO apos commit: Flts 2, Fare $792/10%]
+resumo:edit_commit/d_after_A.png                             OK        (False, None, None)  vs  (False, None, None)   [barra de abas NAO e o resumo: guard tem que recusar]
+resumo:edit_commit/k_confirm_full.png                        OK        (False, None, None)  vs  (False, None, None)   [dialogo YES/NO NAO e o resumo: guard tem que recusar]
+resumo:edit_commit/m_back_to_menu.png                        OK        (False, None, None)  vs  (False, None, None)   [menu principal NAO e o resumo: guard tem que recusar]
+recusa:return_slots_aceite/return_slots_SA01_confirmado.png  OK        All of your slots in this city are currently bei...  vs  recusa reconhecida   [corrida 1: 'All of your slots in this city are currently being used']
+recusa:return_slots_debug/return_slots_SA01_confirmado.png   OK        All of your slots in this city are currently bei...  vs  recusa reconhecida   [corrida 2: mesma recusa, mesmo hash de TEXTBOX]
+recusa:return_slots_aceite/return_slots_SA01_mapa.png        OK        sem recusa  vs  nao e recusa   [tela do mapa com 'Havana': NAO e recusa, nao pode dar falso positivo]
+====================================================================================================
+TOTAL: 17 testes | 17 OK | 0 FALHA | 0 BLOQUEIO
+tempo total: 12.1s | exit=0 (0=tudo OK, 1=FALHA real, 2=so BLOQUEIO de infra)

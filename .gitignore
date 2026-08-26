@@ -1,0 +1,111 @@
+# ROMs sao dumps do usuario — NUNCA commitar (copyright Koei Tecmo)
+roms/*
+!roms/README.md
+*.smc
+*.sfc
+*.state
+
+# Runtime
+harness/ipc/
+harness/__pycache__/
+states/
+
+# (logs/ e tratado no fim do arquivo — a excecao das fixtures precisa vir
+#  DEPOIS da regra *.png, porque no gitignore o ULTIMO padrao que casa vence.)
+
+# --- Segredos e credenciais ---
+# Nunca versionar tokens/credenciais. O harness le o token de telemetria do
+# Logfire de um arquivo LOCAL (.logfire/logfire_credentials.json) que nao
+# deve nunca ir para o git, em nenhum diretorio do repo.
+.logfire/
+**/.logfire/
+*.env
+.env
+.env.*
+!.env.example
+*credentials*.json
+*secrets*.json
+*.pem
+*.key
+
+# --- Python runtime/venv ---
+# Bytecode e ambientes virtuais sao artefatos de maquina local, nao codigo-fonte.
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+
+# --- Savestates e saves de emulador ---
+# Alem de *.state (acima), savestates e save games do BizHawk tambem usam
+# outras extensoes; nenhum deve ser versionado (tamanho + podem embutir
+# dados da ROM protegida por copyright).
+*.sav
+*.savestate
+*.bk2
+
+# --- Artefatos internos de auditoria (nao sao codigo-fonte do projeto) ---
+PUBLICACAO_AUDITORIA.md
+
+# --- Screenshots e artefatos de execucao ---
+# Capturas de tela e outros artefatos gerados por rodadas do harness sao
+# saida de execucao, nao codigo-fonte, e podem crescer sem controle.
+# (as fixtures de teste em logs/ sao a excecao, reincluidas la em cima)
+*.png
+*.jpg
+*.jpeg
+screenshots/
+runs/
+artifacts/
+
+# --- logs/: saida de execucao, COM UMA EXCECAO ---
+# A suite offline (`python harness/test_harness.py --offline`) le capturas de
+# tela reais como fixture — sem elas quem clonar o repo ve 19 testes falharem e
+# conclui que o projeto esta quebrado. Entao: tudo em logs/ e ignorado, menos os
+# .png. Os `!logs/**/` sao obrigatorios: o git nao reinclui um arquivo se o
+# diretorio pai continua excluido, entao e preciso reabrir as pastas primeiro.
+# As pastas sao listadas UMA A UMA de proposito. Uma excecao generica
+# reincluiria tambem as capturas de partidas futuras (pilot.py grava um
+# PNG por turno em logs/eval_*/), e ai quem rodasse o harness veria
+# centenas de arquivos novos aparecerem no git status.
+logs/**
+!logs/buy/
+!logs/buy/**/
+!logs/edit_commit/
+!logs/edit_commit/**/
+!logs/etapa1_slots/
+!logs/etapa1_slots/**/
+!logs/etapa5a/
+!logs/etapa5a/**/
+!logs/lideres_19ago/
+!logs/lideres_19ago/**/
+!logs/logs/
+!logs/logs/**/
+!logs/pnl_19ago/
+!logs/pnl_19ago/**/
+!logs/prova_ic/
+!logs/prova_ic/**/
+!logs/rankings_probe/
+!logs/rankings_probe/**/
+!logs/regioes/
+!logs/regioes/**/
+!logs/return_slots_aceite/
+!logs/return_slots_aceite/**/
+!logs/return_slots_debug/
+!logs/return_slots_debug/**/
+!logs/run_f0/
+!logs/run_f0/**/
+!logs/buy/**/*.png
+!logs/edit_commit/**/*.png
+!logs/etapa1_slots/**/*.png
+!logs/etapa5a/**/*.png
+!logs/lideres_19ago/**/*.png
+!logs/logs/**/*.png
+!logs/pnl_19ago/**/*.png
+!logs/prova_ic/**/*.png
+!logs/rankings_probe/**/*.png
+!logs/regioes/**/*.png
+!logs/return_slots_aceite/**/*.png
+!logs/return_slots_debug/**/*.png
+!logs/run_f0/**/*.png

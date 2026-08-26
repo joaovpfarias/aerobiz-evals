@@ -1,0 +1,17 @@
+{
+  "date": { "year": 1970, "quarter": 1 },
+  "cash_musd": 0,
+  "company": {
+    "name": "",
+    "planes": [ { "model": "", "count": 0, "idle": 0 } ],
+    "slots": [ { "city": "", "n": 0 } ],
+    "routes": [
+      { "route": "CidadeA-CidadeB", "aircraft": "", "flights_week": 0, "fare_level": "mid", "load_pct": 0, "profit_musd": 0 }
+    ],
+    "negotiations": [ { "city": "", "quarters_left": 0 } ]
+  },
+  "rivals": [ { "name": "", "pax_rank": 0 } ],
+  "events": [],
+  "report": { "revenue_musd": 0, "cost_musd": 0, "profit_musd": 0, "pax_total": 0 },
+  "notes_extractor": "campos ilegiveis ou fora da tela: liste aqui"
+}

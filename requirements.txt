@@ -1,0 +1,6 @@
+# Dependencias externas do harness. A suite offline
+# (`python harness/test_harness.py --offline`) usa apenas Pillow e numpy;
+# `requests` so entra quando ha chamada de modelo (harness/agent.py).
+pillow
+numpy
+requests

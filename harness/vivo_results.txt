@@ -1,0 +1,93 @@
+
+### VIVO — 11 acoes de pilot.SUPPORTED, efeito lido da tela
+
+  [OK   ] ponte: lido=ping respondeu | esperado=ponte viva
+  [OK   ] cobertura_SUPPORTED: lido=11/10 acoes cobertas | esperado=todas as acoes de pilot.SUPPORTED tem teste
+
+-- wait (savestate eval_single_2000_lv5)
+   executor: ok=True | sem acao neste trimestre | 3s
+  [OK   ] wait: lido=menu=True caixa 1220000K->1220000K | esperado=menu=True e caixa parada (caixa parada) | sem acao neste trimestre
+   restaurado eval_single_2000_lv5: caixa 1220000K
+
+-- open_route (savestate eval_single_2000_lv5)
+   executor: ok=True | rota NA13->NA06: aviao 0 (MD100), 1 aeronave(s) LIDAS na tela, 1 voos/sem, tarifa mid | banner de origem NAO catalogado (md5 39d79ee1) — se esta rota realmente partiu de NA13, acrescente ROUTE_ORIGIN_ | 95s
+  [OK   ] open_route: lido=in_use 0 -> 1, destinos=['Denver'] (1 Rte) | esperado=in_use +1 e destino Denver na tabela (caixa cai) | rota NA13->NA06: aviao 0 (MD100), 1 aeronave(s) LIDAS na tela, 1 voos/sem, tarifa mid | banner de origem NAO catalogado (md5 39d79ee1) — se esta rota realmente partiu de NA13, acrescente ROUTE_ORIGIN_
+   restaurado eval_single_2000_lv5: caixa 1220000K
+
+-- negotiate_slots (savestate eval_single_2000_lv5)
+   executor: ok=True | negociacao iniciada em NA06 (regiao North America, cursor=(90, 72), regiao_verificada=True, funcionario (0, 0), livres=[(0, 0), (0, 1), (1, 0), (1, 1)], slots pedidos=2 LIDOS DE VOLTA=2 de teto=2 (tel | 89s
+  [OK   ] negotiate_slots: lido=funcionarios livres 4 -> 3 | esperado=3 (caixa qualquer) | negociacao iniciada em NA06 (regiao North America, cursor=(90, 72), regiao_verificada=True, funcionario (0, 0), livres=[(0, 0), (0, 1), (1, 0), (1, 1)], slots pedidos=2 LIDOS DE VOLTA=2 de teto=2 (tel
+   restaurado eval_single_2000_lv5: caixa 1220000K
+
+-- negotiate_slots_guard_teto (savestate eval_single_2000_lv5)
+   executor: ok=False | negociacao em NA06 RECUSADA: o medidor desta tela tem 2 posicao(oes) (teto LIDO DA TELA), e o pedido foi 5 slot(s). Peca no maximo 2 nesta cidade — savestate restaurado (tela=<home>/CursoPRD/me | 49s
+  [OK   ] negotiate_slots_guard_teto: lido=executor ok=False, funcionarios 4->4, caixa 1220000K->1220000K | esperado=recusa (ok=False), funcionarios e caixa intactos | REGRESSAO §36 ao vivo: NA06 tem teto 2; pedir 5 tem que ser RECUSADO com o teto lido da tela e sem gastar funcionario
+   restaurado eval_single_2000_lv5: caixa 1220000K
+
+-- buy_aircraft (savestate eval_single_2000_lv5)
+   executor: ok=True | comprado 1x MD100 (MDC, 4680mi, 200 assentos) por ~28800K; entrega em ~3 meses; tela=<repo>/logs/suite/buy_aircraft/buy_MD100_x1_qtd.png | cai | 135s
+  [OK   ] buy_aircraft: lido=total frota 6 -> 7 | esperado=total frota maior (qty=1) (caixa cai) | comprado 1x MD100 (MDC, 4680mi, 200 assentos) por ~28800K; entrega em ~3 meses; tela=<repo>/logs/suite/buy_aircraft/buy_MD100_x1_qtd.png | cai
+   restaurado eval_single_2000_lv5: caixa 1220000K
+
+-- open_hub (savestate prova_ic_rota_sa)
+   executor: ok=True | hub regional iniciado (regiao 1 South America, funcionario (0, 0), livres=[(0, 0), (0, 1), (1, 0), (1, 1)], caixa 1166820K -> 1138020K (-28800K), funcionarios livres 4 -> 3, telas=['<home>/Curs | 82s
+  [OK   ] open_hub: lido=caixa 1166820K -> 1138020K (-28800K) | esperado=caixa MENOR (caixa cai) | hub regional iniciado (regiao 1 South America, funcionario (0, 0), livres=[(0, 0), (0, 1), (1, 0), (1, 1)], caixa 1166820K -> 1138020K (-28800K), funcionarios livres 4 -> 3, telas=['<home>/Curs
+   restaurado prova_ic_rota_sa: caixa 1166820K
+
+-- adjust_route (savestate probe_hub_open_sa)
+   executor: ok=True | adjust_route(SA01): Flts: pedido 1->3, TETO em 1 (0/2 toques efetivos — a rota nao aceita mais voos/semana, teto nao caracterizado); Fare: mid -> high (2 toque(s)); Flts LIDO DE VOLTA = 1 (TETO da rot | 77s
+  [OK   ] adjust_route: lido=Flts=1; Fare=10% (12 seg); 1 Rte; TETO em 1 declarado pelo executor e confirmado na tela | esperado=Flts=3 ou teto declarado; Fare=10%; 1 Rte (rota preservada) (caixa qualquer) | adjust_route(SA01): Flts: pedido 1->3, TETO em 1 (0/2 toques efetivos — a rota nao aceita mais voos/semana, teto nao caracterizado); Fare: mid -> high (2 toque(s)); Flts LIDO DE VOLTA = 1 (TETO da rot
+   restaurado probe_hub_open_sa: caixa 1138020K
+
+-- return_slots_sem_efeito (savestate eval_single_2000_lv5)
+   executor: ok=False | return_slots em NA06: fluxo travou no passo A5 (tela=<repo>/logs/suite/return_slots_sem_efeito/return_slots_NA06_confirmado.png); estado resta | 176s
+  [OK   ] return_slots_sem_efeito: lido=executor ok=False, funcionarios 4->4, caixa 1220000K->1220000K, motivo contem "travou no passo" | esperado=recusa (ok=False), funcionarios e caixa intactos, motivo contendo "travou no passo" | acao SEM EFEITO MEDIDO (12 -> 12 nossos slots, 2 corridas); ok=True aqui seria a mentira que a ETAPA 2 veio matar
+   restaurado eval_single_2000_lv5: caixa 1220000K
+
+-- return_slots_recusa_em_uso (savestate probe_hub_open_sa)
+[return_slots] painel de SA01 nao lido: ['nao cheguei ao mapa; nenhuma cidade consultada']
+   executor: ok=False | return_slots em SA01: NAO MEDIDO — nao consegui ler nossos slots no painel da cidade; sem leitura de entrada nao ha como provar efeito, entao nao toco no jogo (R1) | 89s
+  [OK   ] return_slots_recusa_em_uso: lido=executor ok=False, funcionarios 3->3, caixa 1138020K->1138020K, motivo contem "NAO MEDIDO" | esperado=recusa (ok=False), funcionarios e caixa intactos, motivo contendo "NAO MEDIDO" | LIMITE HONESTO: nas 3 corridas de 24/08 este caso NUNCA chegou a tela de recusa do jogo — o painel de SA01 nao abriu e o executor abortou ANTES de tocar no jogo (R1). Quem exercita `world.return_slots_refusal` e a regressao OFFLINE REGRESSAO_ETAPA2_RECUSA (--offline), sobre os PNGs em disco. Aqui o que esta medido e o guard R1. slot ocupado por rota nao pode ser devolvido; ok=True aqui e a mentira que a ETAPA 2 veio matar
+   restaurado probe_hub_open_sa: caixa 1138020K
+
+-- close_hub (savestate _hub_rota_do_hub)
+   executor: ok=True | hub regional fechado (regiao 1 South America, sem selecao de funcionario (celula Close nao e staff), caixa 1093380K -> 1125680K (+32300K), funcionarios livres 4 -> 4, chegou_menu=True, telas=['C:/User | 110s
+  [OK   ] close_hub: lido=caixa 1093380K -> 1125680K (+32300K) | esperado=caixa MAIOR (credito) (caixa sobe) | hub regional fechado (regiao 1 South America, sem selecao de funcionario (celula Close nao e staff), caixa 1093380K -> 1125680K (+32300K), funcionarios livres 4 -> 4, chegou_menu=True, telas=['C:/User
+   restaurado _hub_rota_do_hub: caixa 1093380K
+
+-- open_venture (savestate eval_single_2000_lv5)
+   executor: ok=True | venture iniciado (NA13 tipo=0, caixa 1220000K -> 1076000K (-144000K), funcionarios livres 4 -> 3, tela=<repo>/logs/suite/open_venture/venture_ | 115s
+  [OK   ] open_venture: lido=caixa 1220000K -> 1076000K (-144000K) | esperado=caixa MENOR (caixa cai) | venture iniciado (NA13 tipo=0, caixa 1220000K -> 1076000K (-144000K), funcionarios livres 4 -> 3, tela=<repo>/logs/suite/open_venture/venture_
+   restaurado eval_single_2000_lv5: caixa 1220000K
+
+-- ad_campaign (savestate _venture_pronto)
+   executor: ok=True | ad_campaign executada (caixa 1040220K -> 1038420K (-1800K), funcionarios livres 4 -> 3, tela=<repo>/logs/suite/ad_campaign/adcamp_fim.png) | 113s
+  [OK   ] ad_campaign: lido=delta -1800K | esperado=-1800K exatos (caixa cai) | ad_campaign executada (caixa 1040220K -> 1038420K (-1800K), funcionarios livres 4 -> 3, tela=<repo>/logs/suite/ad_campaign/adcamp_fim.png)
+   restaurado _venture_pronto: caixa 1040220K
+
+-- set_budget (savestate eval_single_2000_lv5)
+   executor: ok=True | set_budget(ad=raise): 220K -> 200K (-20K) | 42s
+  [OK   ] set_budget: lido=ordens ['maximum', 'maximum', 'maximum'] -> ['maximum', 'raise', 'maximum'] | esperado=coluna ad = raise, vizinhas intactas, caixa nao cai (caixa parada) | set_budget(ad=raise): 220K -> 200K (-20K)
+   restaurado eval_single_2000_lv5: caixa 1220000K
+
+====================================================================================================
+TESTE                       VEREDITO  LIDO  vs  ESPERADO
+----------------------------------------------------------------------------------------------------
+ponte                       OK        ping respondeu  vs  ponte viva
+cobertura_SUPPORTED         OK        11/10 acoes cobertas  vs  todas as acoes de pilot.SUPPORTED tem teste
+wait                        OK        menu=True caixa 1220000K->1220000K  vs  menu=True e caixa parada (caixa parada)   [sem acao neste trimestre]
+open_route                  OK        in_use 0 -> 1, destinos=['Denver'] (1 Rte)  vs  in_use +1 e destino Denver na tabela (caixa cai)   [rota NA13->NA06: aviao 0 (MD100), 1 aeronave(s) LIDAS na tela, 1 voos/sem, tarifa mid | banner de origem NAO catalogado (md5 39d79ee1) — se esta rota realmente partiu de NA13, acrescente ROUTE_ORIGIN_]
+negotiate_slots             OK        funcionarios livres 4 -> 3  vs  3 (caixa qualquer)   [negociacao iniciada em NA06 (regiao North America, cursor=(90, 72), regiao_verificada=True, funcionario (0, 0), livres=[(0, 0), (0, 1), (1, 0), (1, 1)], slots pedidos=2 LIDOS DE VOLTA=2 de teto=2 (tel]
+negotiate_slots_guard_teto  OK        executor ok=False, funcionarios 4->4, caixa 1220000K->1220000K  vs  recusa (ok=False), funcionarios e caixa intactos   [REGRESSAO §36 ao vivo: NA06 tem teto 2; pedir 5 tem que ser RECUSADO com o teto lido da tela e sem gastar funcionario]
+buy_aircraft                OK        total frota 6 -> 7  vs  total frota maior (qty=1) (caixa cai)   [comprado 1x MD100 (MDC, 4680mi, 200 assentos) por ~28800K; entrega em ~3 meses; tela=<repo>/logs/suite/buy_aircraft/buy_MD100_x1_qtd.png | cai]
+open_hub                    OK        caixa 1166820K -> 1138020K (-28800K)  vs  caixa MENOR (caixa cai)   [hub regional iniciado (regiao 1 South America, funcionario (0, 0), livres=[(0, 0), (0, 1), (1, 0), (1, 1)], caixa 1166820K -> 1138020K (-28800K), funcionarios livres 4 -> 3, telas=['<home>/Curs]
+adjust_route                OK        Flts=1; Fare=10% (12 seg); 1 Rte; TETO em 1 declarado pelo executor e confirmado na tela  vs  Flts=3 ou teto declarado; Fare=10%; 1 Rte (rota preservada) (caixa qualquer)   [adjust_route(SA01): Flts: pedido 1->3, TETO em 1 (0/2 toques efetivos — a rota nao aceita mais voos/semana, teto nao caracterizado); Fare: mid -> high (2 toque(s)); Flts LIDO DE VOLTA = 1 (TETO da rot]
+return_slots_sem_efeito     OK        executor ok=False, funcionarios 4->4, caixa 1220000K->1220000K, motivo contem "travou no passo"  vs  recusa (ok=False), funcionarios e caixa intactos, motivo contendo "travou no passo"   [acao SEM EFEITO MEDIDO (12 -> 12 nossos slots, 2 corridas); ok=True aqui seria a mentira que a ETAPA 2 veio matar]
+return_slots_recusa_em_uso  OK        executor ok=False, funcionarios 3->3, caixa 1138020K->1138020K, motivo contem "NAO MEDIDO"  vs  recusa (ok=False), funcionarios e caixa intactos, motivo contendo "NAO MEDIDO"   [LIMITE HONESTO: nas 3 corridas de 24/08 este caso NUNCA chegou a tela de recusa do jogo — o painel de SA01 nao abriu e o executor abortou ANTES de tocar no jogo (R1). Quem exercita `world.return_slots_refusal` e a regressao OFFLINE REGRESSAO_ETAPA2_RECUSA (--offline), sobre os PNGs em disco. Aqui o que esta medido e o guard R1. slot ocupado por rota nao pode ser devolvido; ok=True aqui e a mentira que a ETAPA 2 veio matar]
+close_hub                   OK        caixa 1093380K -> 1125680K (+32300K)  vs  caixa MAIOR (credito) (caixa sobe)   [hub regional fechado (regiao 1 South America, sem selecao de funcionario (celula Close nao e staff), caixa 1093380K -> 1125680K (+32300K), funcionarios livres 4 -> 4, chegou_menu=True, telas=['C:/User]
+open_venture                OK        caixa 1220000K -> 1076000K (-144000K)  vs  caixa MENOR (caixa cai)   [venture iniciado (NA13 tipo=0, caixa 1220000K -> 1076000K (-144000K), funcionarios livres 4 -> 3, tela=<repo>/logs/suite/open_venture/venture_]
+ad_campaign                 OK        delta -1800K  vs  -1800K exatos (caixa cai)   [ad_campaign executada (caixa 1040220K -> 1038420K (-1800K), funcionarios livres 4 -> 3, tela=<repo>/logs/suite/ad_campaign/adcamp_fim.png)]
+set_budget                  OK        ordens ['maximum', 'maximum', 'maximum'] -> ['maximum', 'raise', 'maximum']  vs  coluna ad = raise, vizinhas intactas, caixa nao cai (caixa parada)   [set_budget(ad=raise): 220K -> 200K (-20K)]
+====================================================================================================
+TOTAL: 15 testes | 15 OK | 0 FALHA | 0 BLOQUEIO
+tempo total: 1684.2s | exit=0 (0=tudo OK, 1=FALHA real, 2=so BLOQUEIO de infra)
