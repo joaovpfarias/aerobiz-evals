@@ -45,9 +45,6 @@ env/
 *.savestate
 *.bk2
 
-# --- Artefatos internos de auditoria (nao sao codigo-fonte do projeto) ---
-PUBLICACAO_AUDITORIA.md
-
 # --- Screenshots e artefatos de execucao ---
 # Capturas de tela e outros artefatos gerados por rodadas do harness sao
 # saida de execucao, nao codigo-fonte, e podem crescer sem controle.
