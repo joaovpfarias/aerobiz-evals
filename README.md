@@ -2,8 +2,6 @@
 
 ## A benchmark for long-horizon strategic reasoning in AI agents
 
-> **Status:** Research prototype in progress. The emulator bridge and a broad set of game actions have been implemented and audited. Final multi-run results are not available yet.
-
 Aerobiz Evals is an experimental environment for studying whether language-model agents can manage a business consistently over a long decision horizon.
 
 The environment uses **Aerobiz Supersonic**, a turn-based airline management simulation. The agent acts as the CEO of an airline and must decide how to use limited capital, negotiate airport slots, buy aircraft, open routes, establish regional hubs, adjust prices, respond to competitors, and adapt to economic events.
@@ -54,6 +52,50 @@ Aerobiz is designed to expose capabilities that are difficult to measure in shor
 - **Competition:** can it respond to rival airlines while maintaining a long-term objective?
 - **Reliable execution:** can it produce valid actions and operate the environment without silent failures?
 - **Self-correction:** can it recognize that an action failed or that an assumption was wrong?
+
+## The game
+
+Aerobiz Supersonic is a turn-based airline management simulation
+for the SNES, published by Koei. Each turn is one financial quarter, and a full scenario runs up
+to 80 quarters — twenty simulated years. Four airlines, one of them the player,
+compete over the same world map.
+
+The map holds **89 cities across 7 regions** (North America, South America,
+Europe, Africa, the Middle East, Southeast Asia, Oceania). Nothing about the
+map is free to use: to fly anywhere, an airline first has to obtain landing
+**slots** at a city, and slots come from a negotiation that takes several
+quarters and occupies one of the company's few negotiators. A city can refuse.
+Its slot ceiling varies — some cities cap at 2, others allow far more — and
+that ceiling is a property of the city, not a global rule.
+
+The main levers, with the costs this project measured in-game rather than read
+from a manual:
+
+| Lever | What it does | Measured cost |
+|---|---|---|
+| Negotiate slots | Buys the right to land in a city; takes quarters, ties up a negotiator | varies by city |
+| Open route | Connects a hub the airline owns to a city where it holds slots; sets weekly frequency and one of three fare levels | operating cost per quarter |
+| Buy aircraft | Orders from a catalog of 8 models differing in price, range, seats and running cost; up to 10 per order | e.g. ~$28,800K for a MD100 |
+| Open regional hub | Establishes a second base in another region, unlocking routes that do not start at headquarters | $28,800K plus one negotiator; not ready the same quarter |
+| Business venture | Buys a facility in a city (hotel, concert hall, and so on) to raise its attractiveness | e.g. $144,000K, months to complete |
+| Ad campaign | Raises demand on the airline's network | ~$1,800K |
+
+Two properties make this hard for an agent, and they are the reason the game
+was chosen:
+
+**Nothing pays off immediately.** An aircraft ordered this quarter arrives in
+about three months. A hub started this quarter is not usable this quarter. A
+venture debits the cash now and counts later. An agent that only optimizes the
+current screen will spend everything and stall.
+
+**Winning is not one number.** The victory condition is compound: hold a hub in
+every region, lead passenger traffic in most of them, and run an annual profit.
+An airline can be rich and losing, or expanding fast and going bankrupt. There
+is no single quantity to hill-climb.
+
+Random events — oil shocks, wars, the Olympics — periodically invalidate a plan
+that was reasonable when it was made, which is what turns the run into a test of
+adaptation rather than of a fixed opening strategy.
 
 ## Why Aerobiz?
 
@@ -179,6 +221,73 @@ ad_campaign
 
 Some game actions remain outside the official evaluation set until they are calibrated and verified again.
 
+## How the evaluation is run
+
+A run is one game: one player, one savestate, a fixed number of quarters. The
+loop is the same whether the player is a language model or a scripted baseline,
+which is what makes the two comparable.
+
+Each turn does the following:
+
+1. **Read the game.** The harness screenshots the emulator and reads the state
+   back out of the pixels — cash, fleet, routes, slots, pending negotiations,
+   budgets, the victory board. Reading is by glyph-hash OCR against an atlas
+   measured from the game itself; an unrecognized glyph produces `None`, never
+   a guessed digit.
+2. **Build the observation.** The state becomes a JSON object, together with the
+   player's own rolling diary from previous turns. Fields that could not be read
+   say so explicitly (`"nao lido neste turno"`) rather than defaulting to zero.
+3. **Ask for actions.** The player returns JSON: a diary update and up to 8
+   actions. It may first request statistics for up to 5 cities and decide with
+   them in the same quarter; how many cities a player inspects before acting is
+   itself recorded.
+4. **Validate.** Actions are checked against the action schema before any
+   emulator time is spent. Invalid actions are returned to the player with the
+   reason, and counted.
+5. **Execute and verify.** Each valid action is translated into controller
+   inputs. Crucially, the harness then checks the game for the *effect* — cash
+   falling by the exact expected amount, a staff bar moving, a counter changing.
+   An action is recorded as successful only if the game changed.
+6. **End the quarter** and record everything: one JSONL line per action with
+   cash before and after, one per turn, plus screenshots.
+
+### How players are compared
+
+Every run — model or baseline — uses the identical savestate, executor, action
+schema, observation format and termination rule. Only the player differs.
+
+The headline metric is the **substantive effect rate**: of the actions that
+actually reached the game, what fraction produced a verified effect, with `wait`
+excluded from the count. Excluding `wait` is not cosmetic. It was measured that
+counting it as an effect gave the random baseline 100% against the greedy
+baseline's 66% — the most passive player won the scoreboard. Alongside it the
+run records goal progress (hubs held, regions entered, the quarter of first
+expansion), the cash curve, and execution reliability (validation errors, JSON
+repair attempts, turns lost to a fallback model).
+
+Two guards keep a comparison honest:
+
+- **Fallback contamination.** Logs record `model_solicitado` and
+  `model_respondeu` separately. If a provider silently served a different model,
+  those turns are visible instead of being attributed to the requested one.
+- **A floor, not just a ceiling.** Two non-LLM baselines run through the exact
+  same path. A model that cannot beat a random legal player is not doing
+  strategy, and without the floor that would be invisible.
+
+### What has been measured so far
+
+Runs completed to date, at the 12-quarter horizon and shorter:
+
+| Player | Runs | Longest run | Substantive effect rate |
+|---|---|---|---|
+| `greedy` baseline | 6 | 12 quarters | 44-67% |
+| `random` baseline | 9 | 12 quarters | 58-100% |
+| LLM (`laguna-s-2.1-free`) | 3 | 2 quarters | not yet measurable |
+
+These establish that the harness executes and verifies actions end to end. The
+multi-seed, multi-model comparison at the full 80-quarter horizon has not been
+run, so no ranking between models exists yet.
+
 ## How to measure the result
 
 The evaluation should report a **vector of metrics**, rather than immediately reducing performance to a single number. A single score can hide important differences between a profitable but unreliable agent and a reliable agent with a weak strategy.
@@ -293,30 +402,6 @@ The current single-player setup uses:
 
 The multiplayer version is planned as a separate track in which up to four agents control different airlines in the same game.
 
-## Current status and limitations
-
-The project currently has:
-
-- a BizHawk-Lua-Python bridge;
-- global city and region catalogs;
-- semantic action schemas;
-- navigation macros;
-- reference savestates;
-- effect-based action verification;
-- per-turn JSONL logs;
-- non-LLM baselines;
-- an audit of the currently supported actions.
-
-The project is still a research prototype. In particular:
-
-- the final multi-seed comparison has not been completed;
-- the initial model pair does not yet provide an independently measured capability contrast;
-- the current savestate may make some intercontinental objectives unreachable;
-- the multiplayer track is not complete;
-- some actions remain disabled until further calibration.
-
-Therefore, current smoke tests demonstrate that the integration works, but they should not be presented as a definitive ranking of model intelligence.
-
 ## Reproducibility and ROM policy
 
 The project is currently Windows-oriented and uses BizHawk, Python, and a legally obtained copy of Aerobiz Supersonic.
@@ -376,15 +461,6 @@ Telemetry is optional and off by default: `harness/obs.py` sends nothing unless
 a local `.logfire/logfire_credentials.json` exists (never committed). Set
 `AEROBIZ_LOGFIRE_PROJETO="youraccount/yourproject"` to pin the destination
 project, so a credential from another project is refused instead of used.
-
-## Roadmap
-
-1. Freeze a reproducible protocol and an initial state with reachable objectives.
-2. Complete long single-player runs with multiple seeds.
-3. Add a stronger reference policy and statistical analysis.
-4. Separate strategic, execution, perception, and memory tracks.
-5. Add the multiplayer arena.
-6. Add replay visualizations and a public leaderboard.
 
 ## Related work
 
